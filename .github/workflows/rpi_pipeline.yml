@@ -1,0 +1,16 @@
+name: RPi_GPIO_LED_Driver_Pipeline
+
+# Trigger the pipeline on push events
+on: [push]
+
+# Work that will be executed when the pipeline is triggered
+jobs:
+  hello_kernel_module:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print a message
+        run: echo "Hello, Kernel Module!"
+
+      - name: Show current date
+        run: date
