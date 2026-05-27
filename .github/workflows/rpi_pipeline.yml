@@ -20,3 +20,38 @@ jobs:
       - name: Run kernel style check
         run: |
           ./checkpatch.pl --strict --no-tree --file kernel_module/hello.c
+
+  cross_compile_arm:
+    runs-on: ubuntu-latest
+    needs: style_check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install ARM cross-toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-linux-gnueabihf
+      
+      - name: Fetch minimal kernel headers for ARM
+        run: |
+          git clone --depth 1 --branch rpi-6.1.y https://github.com/raspberrypi/linux.git /tmp/rpi-kernel
+
+      - name: Cross-compile hello.ko
+        run: |
+          cd kernel_module
+          make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- \
+            KDIR=/tmp/rpi-kernel
+
+      - name: Verify compiled module
+        run: |
+          file kernel_module/hello.ko
+          modinfo kernel_module/hello.ko
+
+      - name: Upload .ko artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-moduile-arm
+          path: kernel_module/hello.ko
+          retention-days: 5
