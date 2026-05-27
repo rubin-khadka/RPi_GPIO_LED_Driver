@@ -5,12 +5,18 @@ on: [push]
 
 # Work that will be executed when the pipeline is triggered
 jobs:
-  hello_kernel_module:
+  style_check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print a message
-        run: echo "Hello, Kernel Module!"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Show current date
-        run: date
+      - name: Download checkpatch.pl
+        run: |
+          wget https://raw.githubusercontent.com/torvalds/linux/master/scripts/checkpatch.pl
+          chmod +x checkpatch.pl
+
+      - name: Run kernel style check
+        run: |
+          ./checkpatch.pl --strict --no-tree --file kernel_module/hello.c
