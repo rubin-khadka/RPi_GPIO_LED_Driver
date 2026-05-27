@@ -13,13 +13,13 @@ MODULE_PARM_DESC(myname, "A name to say hello to");
 
 static int __init hello_init(void)
 {
-    pr_info("Hello, %s!\n", myname);
-    return 0;
+	pr_info("Hello, %s!\n", myname);
+	return 0;
 }
 
 static void __exit hello_exit(void)
 {
-    pr_info("Goodbye, %s!\n", myname);
+	pr_info("Goodbye, %s!\n", myname);
 }
 
 module_init(hello_init);
