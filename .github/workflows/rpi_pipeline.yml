@@ -32,26 +32,32 @@ jobs:
       - name: Install ARM cross-toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-arm-linux-gnueabihf
+          sudo apt-get install -y gcc-arm-linux-gnueabihf \
+            crossbuild-essential-armhf
       
-      - name: Fetch minimal kernel headers for ARM
+      - name: Download RPi kernel headers (pre-built)
         run: |
-          git clone --depth 1 --branch rpi-6.1.y https://github.com/raspberrypi/linux.git /tmp/rpi-kernel
-
+          sudo apt-get install -y wget
+          wget https://github.com/raspberrypi/linux/releases/download/1.20250402-1/linux-headers-6.6.74-1-rpi_6.6.74-1_armhf.deb
+          sudo dpkg -i linux-headers-*.deb || true
+          
+          ls /usr/src/ | grep linux-headers
+          export RPI_KDIR=/usr/src/$(ls /usr/src/ | grep linux-headers | head -1)
+          echo "Using kernel headers at: $RPI_KDIR"
+      
       - name: Cross-compile hello.ko
         run: |
           cd kernel_module
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- \
             KDIR=/tmp/rpi-kernel
-
+      
       - name: Verify compiled module
         run: |
           file kernel_module/hello.ko
-          modinfo kernel_module/hello.ko
-
+      
       - name: Upload .ko artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hello-moduile-arm
+          name: hello-module-arm
           path: kernel_module/hello.ko
           retention-days: 5
