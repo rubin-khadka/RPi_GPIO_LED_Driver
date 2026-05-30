@@ -19,4 +19,4 @@ jobs:
 
       - name: Run kernel style check
         run: |
-          ./checkpatch.pl --strict --no-tree --file kernel_module/hello.c
+          ./checkpatch.pl --strict --no-tree --file kernel_module/led_driver.c
