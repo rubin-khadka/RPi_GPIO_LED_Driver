@@ -1,0 +1,120 @@
+Started by user Rubin Khadka
+Obtained Jenkinsfile from git https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/RPi-GPIO-LED-Driver
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential pi-ssh-key
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/RPi-GPIO-LED-Driver/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git # timeout=10
+Fetching upstream changes from https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+using GIT_SSH to set credentials SSH key for Jenkins → Pi hardware testing
+Verifying host key using known hosts file
+ > git fetch --tags --force --progress -- https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 00308e0656404afbc3009890e5be0ad0824beafd (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 00308e0656404afbc3009890e5be0ad0824beafd # timeout=10
+Commit message: "remove already existing module"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential pi-ssh-key
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/RPi-GPIO-LED-Driver/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git # timeout=10
+Fetching upstream changes from https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+using GIT_SSH to set credentials SSH key for Jenkins → Pi hardware testing
+Verifying host key using known hosts file
+ > git fetch --tags --force --progress -- https://github.com/rubin-khadka/RPi_GPIO_LED_Driver.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 00308e0656404afbc3009890e5be0ad0824beafd (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 00308e0656404afbc3009890e5be0ad0824beafd # timeout=10
+Commit message: "remove already existing module"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Copy & Build on RPi)
+[Pipeline] withCredentials
+Masking supported pattern matches of $SSH_KEY
+[Pipeline] {
+[Pipeline] sh
++ ssh -i **** -o StrictHostKeyChecking=no rubin@10.42.0.214 mkdir -p /tmp/led_driver_build
++ scp -i **** -o StrictHostKeyChecking=no kernel_module/Makefile kernel_module/hello.c kernel_module/led_driver.c rubin@10.42.0.214:/tmp/led_driver_build/
++ ssh -i **** -o StrictHostKeyChecking=no rubin@10.42.0.214 cd /tmp/led_driver_build && make
+make -C /lib/modules/6.18.29+rpt-rpi-v7/build M=/tmp/led_driver_build modules
+make[1]: Entering directory '/usr/src/linux-headers-6.18.29+rpt-rpi-v7'
+make[2]: Entering directory '/tmp/led_driver_build'
+  CC [M]  led_driver.o
+  MODPOST Module.symvers
+  LD [M]  led_driver.ko
+make[2]: Leaving directory '/tmp/led_driver_build'
+make[1]: Leaving directory '/usr/src/linux-headers-6.18.29+rpt-rpi-v7'
++ echo Build successful!
+Build successful!
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test LED Module)
+[Pipeline] withCredentials
+Masking supported pattern matches of $SSH_KEY
+[Pipeline] {
+[Pipeline] sh
++ ssh -i **** -o StrictHostKeyChecking=no rubin@10.42.0.214 
+                            cd /tmp/led_driver_build &&
+                            sudo rmmod led_driver 2>/dev/null || true &&
+                            sudo insmod led_driver.ko && 
+                            echo 'LED Module Loaded Successfully!' &&
+                            sleep 2 &&
+                            sudo rmmod led_driver &&
+                            echo 'LED Module Unloaded Successfully!'
+                        
+LED Module Loaded Successfully!
+LED Module Unloaded Successfully!
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Cleanup)
+[Pipeline] withCredentials
+Masking supported pattern matches of $SSH_KEY
+[Pipeline] {
+[Pipeline] sh
++ ssh -i **** -o StrictHostKeyChecking=no rubin@10.42.0.214 rm -rf /tmp/led_driver_build
++ echo Cleanup complete!
+Cleanup complete!
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
