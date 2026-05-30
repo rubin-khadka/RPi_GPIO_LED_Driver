@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        RPI_HOST = '192.168.1.100'
-        RPI_USER = 'pi'
+        RPI_HOST = '10.42.0.214'
+        RPI_USER = 'rubin'
         RPI_BUILD_DIR = '/tmp/led_driver_build'  // Build in temp folder
     }
     
