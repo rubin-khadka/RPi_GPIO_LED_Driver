@@ -15,7 +15,7 @@ static int __init led_init(void)
 	int ret;
 
 	ret = gpio_request(LED_GPIO_PIN, "LED_GPIO");
-	if (ret){
+	if (ret) {
 		pr_info("Failed to request GPIO %d\n", LED_GPIO_PIN);
 		return ret;
 	}
