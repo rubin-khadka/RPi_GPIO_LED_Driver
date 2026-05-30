@@ -41,6 +41,7 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SSH_USER}@${RPI_HOST} "
                             cd ${RPI_BUILD_DIR} &&
+                            sudo rmmod led_driver 2>/dev/null || true &&
                             sudo insmod led_driver.ko && 
                             echo 'LED Module Loaded Successfully!' &&
                             sleep 2 &&
