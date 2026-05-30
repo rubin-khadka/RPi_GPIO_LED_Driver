@@ -1,4 +1,4 @@
-obj-m += hello.o
+obj-m += led_driver.o
 
 kDIR ?= /lib/modules/$(shell uname -r)/build
 
