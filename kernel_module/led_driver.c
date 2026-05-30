@@ -15,23 +15,22 @@ static int __init led_init(void)
 	int ret;
 
 	ret = gpio_request(LED_GPIO_PIN, "LED_GPIO");
-	if (ret)
-	{
-		pr_info(KERN_ERR "Failed to request GPIO %d\n", LED_GPIO_PIN);
+	if (ret){
+		pr_info("Failed to request GPIO %d\n", LED_GPIO_PIN);
 		return ret;
 	}
 
 	gpio_direction_output(LED_GPIO_PIN, 0);
 
-	pr_info(KERN_INFO "LED Driver Loaded, GPIO %d initialised\n", LED_GPIO_PIN);
+	pr_info("LED Driver Loaded, GPIO %d initialised\n", LED_GPIO_PIN);
 	return 0;
-}	
+}
 
 static void __exit led_exit(void)
 {
 	gpio_set_value(LED_GPIO_PIN, 0);
 	gpio_free(LED_GPIO_PIN);
-	pr_info(KERN_INFO "LED Driver Unloaded, GPIO %d freed\n", LED_GPIO_PIN);
+	pr_info("LED Driver Unloaded, GPIO %d freed\n", LED_GPIO_PIN);
 }
 
 module_init(led_init);
